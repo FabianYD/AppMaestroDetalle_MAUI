@@ -1,0 +1,16 @@
+# Visual Studio
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# MAUI / Xamarin specific
+[Dd]ouble[Ww]rite[Uu]pdate[Ss]ervice.lnk
+[Tt]emp[Pp]e[Vv]erify[Dd]ir/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
