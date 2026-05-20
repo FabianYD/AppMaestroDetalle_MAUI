@@ -44,7 +44,7 @@ namespace AppMaestroDetalle
             }
             else
             {
-                DisplayAlert("Error", "Seleccione un producto y digite una cantidad válida.", "OK");
+                DisplayAlertAsync("Error", "Seleccione un producto y digite una cantidad válida.", "OK");
             }
         }
 
@@ -65,12 +65,12 @@ namespace AppMaestroDetalle
         {
             if (string.IsNullOrWhiteSpace(txtCliente.Text) || string.IsNullOrWhiteSpace(txtEstado.Text) || LineasTemporales.Count == 0)
             {
-                DisplayAlert("Atención", "Complete el Cliente, Estado y al menos agregue una línea de pedido.", "OK");
+                DisplayAlertAsync("Atención", "Complete el Cliente, Estado y al menos agregue una línea de pedido.", "OK");
                 return;
             }
 
             var nuevoPedido = _database.CrearPedido(txtCliente.Text, txtEstado.Text, LineasTemporales.ToList());
-            lblResumen.Text = $"Pedido Creado! ID: {nuevoPedido.Id} - {nuevoPedido.Cliente} con {LineasTemporales.Count} items.";
+            DisplayAlertAsync("Éxito", $"Pedido Creado! ID: {nuevoPedido.Id} - {nuevoPedido.Cliente} con {LineasTemporales.Count} items.", "OK");
             
             LimpiarFormulario();
         }
@@ -91,17 +91,16 @@ namespace AppMaestroDetalle
                     {
                         LineasTemporales.Add(linea);
                     }
-                    lblResumen.Text = $"Pedido {pedido.Id} cargado con éxito.";
+                    DisplayAlertAsync("Éxito", $"Pedido {pedido.Id} encontrado y cargado correctamente.", "OK");
                 }
                 else
                 {
-                    DisplayAlert("Error", $"No se encontró un pedido con el ID {id}", "OK");
-                    lblResumen.Text = "Resumen del pedido aparecerá aquí...";
+                    DisplayAlertAsync("Error", $"No se encontró un pedido con el ID {id}", "OK");
                 }
             }
             else
             {
-                DisplayAlert("Atención", "Digite un ID válido para leer.", "OK");
+                DisplayAlertAsync("Atención", "Digite un ID válido para leer.", "OK");
             }
         }
 
@@ -113,17 +112,17 @@ namespace AppMaestroDetalle
                 var pedido = _database.LeerPedido(id);
                 if (pedido == null)
                 {
-                    DisplayAlert("Error", $"No existe el pedido {id} para actualizar.", "OK");
+                    DisplayAlertAsync("Error", $"No existe el pedido {id} para actualizar.", "OK");
                     return;
                 }
 
                 _database.ActualizarPedido(id, txtCliente.Text, txtEstado.Text, LineasTemporales.ToList());
-                lblResumen.Text = $"Pedido {id} actualizado correctamente con {LineasTemporales.Count} items.";
+                DisplayAlertAsync("Éxito", $"Pedido {id} actualizado correctamente con {LineasTemporales.Count} items.", "OK");
                 LimpiarFormulario();
             }
             else
             {
-                DisplayAlert("Atención", "Debe digitar un ID válido y tener Cliente/Estado rellenos.", "OK");
+                DisplayAlertAsync("Atención", "Debe digitar un ID válido y tener Cliente/Estado rellenos.", "OK");
             }
         }
 
@@ -135,17 +134,17 @@ namespace AppMaestroDetalle
                 if (pedido != null)
                 {
                     _database.EliminarPedido(id);
-                    lblResumen.Text = $"Pedido {id} eliminado de la base de datos.";
+                    DisplayAlertAsync("Éxito", $"Pedido {id} eliminado de la base de datos.", "OK");
                     LimpiarFormulario();
                 }
                 else
                 {
-                    DisplayAlert("Error", $"No se encontró el pedido {id} para eliminar.", "OK");
+                    DisplayAlertAsync("Error", $"No se encontró el pedido {id} para eliminar.", "OK");
                 }
             }
             else
             {
-                DisplayAlert("Atención", "Digite un ID válido para eliminar.", "OK");
+                DisplayAlertAsync("Atención", "Digite un ID válido para eliminar.", "OK");
             }
         }
 
@@ -157,6 +156,12 @@ namespace AppMaestroDetalle
             pickerProducto.SelectedIndex = -1;
             txtCantidad.Text = string.Empty;
             LineasTemporales.Clear();
+        }
+
+        // Método de ayuda para compatibilidad con DisplayAlertAsync de forma asíncrona pero sin obligar al await
+        private async void DisplayAlertAsync(string title, string message, string cancel)
+        {
+            await DisplayAlert(title, message, cancel);
         }
     }
 }
